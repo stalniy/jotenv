@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.1](https://github.com/stalniy/jotenv/compare/v1.1.0...v1.1.1) (2021-07-04)
+
+
+### Bug Fixes
+
+* fixes path to types in package.json ([bf584ce](https://github.com/stalniy/jotenv/commit/bf584ce02b4cae8d8a78e19eaca7bbf740bf75b6))
+
 # [1.1.0](https://github.com/stalniy/jotenv/compare/v1.0.2...v1.1.0) (2021-07-04)
 
 
