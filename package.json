@@ -10,7 +10,7 @@
   "scripts": {
     "build": "rm -rf dist/* && tsc",
     "test": "jest",
-    "prerelease": "npm run build",
+    "prerelease": "npm run build && npm test",
     "release": "semantic-release"
   },
   "keywords": [
