@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+# [1.1.0](https://github.com/stalniy/jotenv/compare/v1.0.2...v1.1.0) (2021-07-04)
+
+
+### Features
+
+* adds support for `ENV_` prefixes and possibility to toggle process.env overrides ([5167b08](https://github.com/stalniy/jotenv/commit/5167b08026d6b363a1b7fea941f26059b9eb29ee))
+
 ## [1.0.2](https://github.com/stalniy/jotenv/compare/v1.0.1...v1.0.2) (2021-07-04)
 
 
