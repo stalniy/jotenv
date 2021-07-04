@@ -67,6 +67,40 @@ const config = loadConfig({
 // }
 ```
 
+## Encryption through custom transformation
+
+Sometimes, it may be useful to keep configuration files together with application code, so they don't go out of sync and other contributors may change them. But it's unsafe to keep all configs in plain text, especially passwords, tokens, etc.
+
+To solve this, we need to encrypt sensitive values and decrypt them when application starts. To do this with jotenv, we just need to provide a custom transformation:
+
+```ts
+import { loadConfig } from "jotenv";
+
+const schema = {
+  type: "object",
+  required: ["DB_PASSWORD", "DB_HOST"],
+  properties: {
+    DB_HOST: {
+      type: "string"
+    },
+    DB_PASSWORD: {
+      type: "string",
+      transform: "decrypt"
+    },
+  }
+};
+
+const config = loadConfig({
+  path: `${process.cwd()}/.env`,
+  schema,
+  transformations: {
+    decrypt(value: string) {
+      // custom decryption algorithm
+    }
+  }
+});
+```
+
 ## Licence
 
 [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0), 2021-present Sergii Stotskyi
