@@ -3,7 +3,7 @@
   "version": "1.1.0",
   "description": "Minimalistic configuration based on .env files and json-schema",
   "main": "dist/index.js",
-  "types": "dist/types",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
