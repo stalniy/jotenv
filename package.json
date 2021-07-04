@@ -8,7 +8,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf dist/* && tsc",
     "test": "jest",
     "prerelease": "npm run build",
     "release": "semantic-release"
