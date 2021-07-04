@@ -1,27 +1,28 @@
 export interface ParserOptions {
   envVarPrefix?: string;
   interpolateVariables?: boolean;
+  overrideByEnv?: boolean;
   debug?(message: string): void;
 }
 
 export function parseConfig<T>(content: string, options: ParserOptions = {}): T {
   const lines = content.split(/[\r\n]+/);
   const config = Object.create(null);
-  const envVarPrefix = options.envVarPrefix || "";
+  const fullOptions = {
+    envVarPrefix: "",
+    ...options,
+  };
 
   for (let i = 0; i < lines.length; i++) {
-    const variable = parseVariable(lines[i], options);
+    const variable = parseVariable(lines[i], fullOptions);
 
     if (variable) {
-      config[variable.name] = process.env[envVarPrefix + variable.name] ?? variable.value;
+      config[variable.name] = getValue(variable.name, variable.value, fullOptions);
     }
   }
 
   if (options.interpolateVariables) {
-    return interpolateVariables(config, {
-      ...options,
-      envVarPrefix,
-    }) as unknown as T;
+    return interpolateVariables(config, fullOptions) as unknown as T;
   }
 
   return config as T;
@@ -76,7 +77,7 @@ function parseVariable(rawLine: string, options: ParserOptions) {
 function interpolateVariables(config: Record<string, string>, options: ParserOptions): Record<string, string> {
   const keys = Object.keys(config);
   const result = Object.create(null);
-  const context: InterpolationContext = { result, currentPath: [], envVarPrefix: options.envVarPrefix! };
+  const context: InterpolationContext = { result, currentPath: [], options };
 
   for (let i = 0; i < keys.length; i++) {
     context.currentPath = [];
@@ -89,12 +90,12 @@ function interpolateVariables(config: Record<string, string>, options: ParserOpt
 interface InterpolationContext {
   currentPath: string[];
   result: Record<string, string>;
-  envVarPrefix: string
+  options: ParserOptions;
 }
 
 const VARIABLE_REGEX = /\$\{([\w_]+)\}/g;
-function interpolateVariable(config: Record<string, string>, name: string, context: InterpolationContext): string {
-  const value = process.env[context.envVarPrefix + name] ?? config[name];
+function interpolateVariable(config: Record<string, string>, name: string, context: InterpolationContext): string | undefined {
+  const value = getValue(name, config[name], context.options);
 
   if (typeof value !== "string" || !value.includes('$')) {
     return value;
@@ -116,6 +117,18 @@ function interpolateVariable(config: Record<string, string>, name: string, conte
       throw new Error(`Unable to resolve ${varName} during interpolation (its value is undefined)`);
     }
 
-    return varValue === undefined ? '' : varValue;
+    return varValue;
   });
+}
+
+function getValue(name: string, value: string, options: ParserOptions) {
+  if (name.startsWith("ENV_")) {
+    return process.env[name.slice(4)];
+  }
+
+  if (!options.overrideByEnv) {
+    return value;
+  }
+
+  return process.env[options.envVarPrefix + name] ?? value;
 }

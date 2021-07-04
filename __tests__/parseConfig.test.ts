@@ -31,7 +31,7 @@ Object {
 
   it('allows to interpolate variables', () => {
     const config = parseConfig(`
-      UPLOADS_DIR=\${HOME}/uploads
+      UPLOADS_DIR=\${ENV_HOME}/uploads
       DB_HOST=localhost
       DB_USER=user
       DB_PASSWORD=secret
@@ -54,16 +54,16 @@ Object {
     expect(() => parseConfig('HOST=\'localhost')).toThrow(/not closed with the same symbol/);
   });
 
-  it('prefers variable from `process.env` to variable in config', () => {
+  it('prefers variable from `process.env` to variable in config if "overrideByEnv" is true', () => {
     process.env.BLA = 'env';
-    const config = parseConfig<{ BLA: string }>(`BLA=config`);
+    const config = parseConfig<{ BLA: string }>(`BLA=config`, { overrideByEnv: true });
 
     expect(config.BLA).toEqual(process.env.BLA);
   });
 
   it('uses variable from `process.env` with custom prefix', () => {
     process.env.JENV_BLA = 'env';
-    const config = parseConfig<{ BLA: string }>(`BLA=config`, { envVarPrefix: "JENV_" });
+    const config = parseConfig<{ BLA: string }>(`BLA=config`, { envVarPrefix: "JENV_", overrideByEnv: true });
 
     expect(config.BLA).toEqual(process.env.JENV_BLA);
   });

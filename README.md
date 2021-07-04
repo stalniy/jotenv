@@ -13,8 +13,8 @@ npm i jotenv
 ## Features
 
 * parses .env files
-* overrides variables in .env files by variables with the same name from `process.env` (also supports custom prefix for env provided vars)
-* variables interpolation (requires specifying `interpolateVariables`)
+* overrides variables in .env files by variables with the same name from `process.env` (if `overridesByEnv` option is `true`)
+* variables interpolation (requires specifying `interpolateVariables`, variables that starts with `ENV_` are retrieved from `process.env`)
 * custom value transformations (provides one built-in - `splitBySemicolon`)
 * casts values to specified in schema types
 
@@ -101,8 +101,38 @@ const config = loadConfig({
 });
 ```
 
+## TypeScript and shape of config
+
+To get ts validation and IDE hints for config properties, we can use an awesome [json-schema-to-ts] library:
+
+```ts
+import { FromSchema } from "json-schema-to-ts";
+
+const schema = {
+  type: "object",
+  required: ["DB_PASSWORD", "DB_HOST"],
+  properties: {
+    DB_HOST: {
+      type: "string"
+    },
+    DB_PASSWORD: {
+      type: "string",
+    },
+  }
+} as const; // Important!
+
+const config = loadConfig<FromSchema<typeof schema>>({
+  path: `${process.cwd()}/.env`,
+  schema,
+});
+
+console.log(config.DB_HOST) // OK
+console.log(config.DB_PASS) // fails at compile time
+```
+
 ## Licence
 
 [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0), 2021-present Sergii Stotskyi
 
 [json-schema]: https://json-schema.org/
+[json-schema-to-ts]: https://github.com/ThomasAribart/json-schema-to-ts
