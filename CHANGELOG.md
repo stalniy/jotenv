@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.1](https://github.com/stalniy/jotenv/compare/v1.0.0...v1.0.1) (2021-07-04)
+
+
+### Bug Fixes
+
+* restrict package to contain only dist files ([b2c85f9](https://github.com/stalniy/jotenv/commit/b2c85f9fc5b1f81b4ce96186883d38fa2e18560d))
+
 # 1.0.0 (2021-07-04)
 
 
